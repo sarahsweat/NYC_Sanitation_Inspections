@@ -4,6 +4,7 @@ require 'pry'
 
 # KFC single restaurant example
 class API_Comm
+
   def self.find_restaurant_by_name name
     rest = RestClient.get('https://data.cityofnewyork.us/resource/9w7m-hzhe.json?dba=' + name)
     rest_json = JSON.parse(rest)
@@ -16,8 +17,12 @@ class API_Comm
     json_results.uniq {|inspection| inspection["camis"]}
   end
 
-  binding.pry
+  def self.find_by_boro json_results, boro
+    json_results.select {|inspection| inspection["boro"] == boro.upcase}
+  end
 
-  brooklyn_kfcs = unique_kfc.select {|inspection| inspection["boro"] == "BROOKLYN"}
-  kfcs_by_zip = unique_kfc.select {|inspection| inspection["zipcode"] == "10003"}
+  def self.find_by_zip json_results, zip
+    json_results.select {|inspection| inspection["zipcode"] == zip.to_s}
+  end
+
 end
