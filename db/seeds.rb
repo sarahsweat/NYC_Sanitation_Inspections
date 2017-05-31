@@ -1,26 +1,56 @@
-sarah = User.find_or_create_by(name:"sarah")
-jp = User.find_or_create_by(name:"jp")
-pradeep = User.find_or_create_by(name:"pradeep")
-pat = User.find_or_create_by(name:"pat")
+require "pry"
 
-fiction = Category.find_or_create_by(name:"fiction")
-non_fiction = Category.find_or_create_by(name:"non-fiction")
+user1 = User.create(username: "abc123")
+user2 = User.create(username: "def456")
+user3 = User.create(username: "candygirl_937")
+user4 = User.create(username: "badchick_999")
 
-# fiction_books = ["Harry Potter", "Lord of the Rings 1", "Lord of the Rings 2"]
-# non_fiction_books = ["Intro to C++", "Intro to Ruby", "Intro to Join Tables"]
-#
-# fiction_books.each do |book|
-#   Book.find_or_create_by(title:book, category:fiction)
-# end
 
-author1 = Author.find_or_create_by(name:"jk rowling")
-author2 = Author.find_or_create_by(name:"ada lovelace")
-author3 = Author.find_or_create_by(name:"jrr tolkien")
+user1.first_name = "Sarah"
+user2.first_name = "Jason"
+user3.first_name = "Jared"
+user4.first_name = "Yomi"
 
-fiction_book1 = Book.find_or_create_by(title:"harry potter", author:author1, category: fiction)
-fiction_book2 = Book.find_or_create_by(title:"lord of the rings", author:author3, category: fiction)
-fiction_book3 = Book.find_or_create_by(title:"lord of the rings 2", author:author3, category: fiction)
+user1.last_name = "Sweat"
+user2.last_name = "Sears"
+user3.last_name = "Johnson"
+user4.last_name = "Dude"
 
-non_fiction_book1 = Book.find_or_create_by(title:"intro to c++", author:author2, category: non_fiction)
-non_fiction_book2 = Book.find_or_create_by(title:"intro to ruby", author:author2, category: non_fiction)
-non_fiction_book2 = Book.find_or_create_by(title:"intro to join tables", author:author2, category: non_fiction)
+user1.save
+user2.save
+user3.save
+user4.save
+
+restaurant_hash1 = {"camis" => "45682",
+                    "name" => "KFC",
+                    "street" =>"11 broadway",
+                    "boro" => "manhattan",
+                    "zip" => "11001",
+                    "phone" => "5555555555"
+                    }
+restaurant_hash2 = {"camis" => "12345",
+                    "name" => "KFC",
+                    "street" =>"18 broadway",
+                    "boro" => "manhattan",
+                    "zip" => "11004",
+                    "phone" => "6666666666"
+                    }
+restaurant_hash3 = {"camis" => "87655",
+                    "name" => "Subway",
+                    "street" =>"789 broadway",
+                    "boro" => "manhattan",
+                    "zip" => "00116",
+                    "phone" => "3456781122"
+                    }
+restaurant_hash4 = {"camis" => "01224",
+                    "name" => "McDonalds",
+                    "street" =>"7892 broadway",
+                    "boro" => "manhattan",
+                    "zip" => "09862",
+                    "phone" => "9876547733"
+                    }
+
+rest1 = user1.save_restaurant_to_user(true, restaurant_hash1)
+rest2 = user2.save_restaurant_to_user(false, restaurant_hash2)
+rest3 = user3.save_restaurant_to_user(true, restaurant_hash3)
+rest4 = user4.save_restaurant_to_user(false, restaurant_hash4)
