@@ -1,4 +1,7 @@
+require "pry"
+
 class CLI
+
   def initialize
     puts "Hello and welcome to the best NYC Restaurant Sanitation Evaluation App!"
     @user = nil
@@ -22,16 +25,17 @@ class CLI
   end
 
   def signup
-    puts "SIGNING UP"
+    puts "-----------SIGNING UP-----------"
     puts "Please enter your desired Username."
     name = gets.chomp.downcase
     new_user = User.new(name)
-
+    binding.pry
+    puts "Your username is:   #{new_user.username}"
   end
 
   def login
-    puts "LOGGING IN"
-    while @user.nil?
+    puts "-----------LOGGING IN-----------"
+    while self.user.nil?
       puts "What is your username?"
       name = gets.chomp.downcase
       @user = User.find_by_name(name)
