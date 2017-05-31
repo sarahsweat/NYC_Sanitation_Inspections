@@ -26,10 +26,17 @@ class CLI
 
   def signup
     puts "-----------SIGNING UP-----------"
+    puts "Please enter your First Name"
+    first_name = gets.chomp.downcase
+    puts "Please enter your Last Name"
+    last_name = gets.chomp.downcase
     puts "Please enter your desired Username."
-    name = gets.chomp.downcase
-    new_user = User.new(name)
-    binding.pry
+    username = gets.chomp.downcase
+    new_user = User.find_or_create_by(username: username) do |new_user|
+      new_user.first_name = first_name
+      new_user.last_name = last_name
+    end
+    puts "Thanks, #{new_user.first_name} #{new_user.last_name}."
     puts "Your username is:   #{new_user.username}"
   end
 
