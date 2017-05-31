@@ -6,4 +6,5 @@ cli = CLI.new
 cli.sign_up_or_login
 
 
+
 binding.pry

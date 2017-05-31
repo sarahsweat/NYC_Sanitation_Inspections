@@ -3,10 +3,12 @@ Bundler.require
 
 require 'active_record'
 
-DBNAME = "library"
+DBNAME = "NYC_Sanitation"
 
 Dir[File.join(File.dirname(__FILE__), "../app/models", "*.rb")].each {|f| require f}
 Dir[File.join(File.dirname(__FILE__), "../lib/support", "*.rb")].each {|f| require f}
+Dir[File.join(File.dirname(__FILE__), "../lib", "*.rb")].each {|f| require f}
+
 
 DBRegistry[ENV["ACTIVE_RECORD_ENV"]].connect!
 DB = ActiveRecord::Base.connection
