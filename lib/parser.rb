@@ -20,4 +20,6 @@ class Parser
 
   # search_restaurant_violations_by_id 41011367, "roaches"
 
+  # parser based on pests, food handling, facility
+
 end
