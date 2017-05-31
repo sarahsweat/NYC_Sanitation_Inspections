@@ -1,8 +1,6 @@
 ENV["ACTIVE_RECORD_ENV"] ||= "development"
 require_relative "../config/environment"
 
-escape_app = false
-
 
   cli = CLI.new
   cli.sign_up_or_login
@@ -11,4 +9,3 @@ escape_app = false
 
 puts "Goodbye"
 
-#binding.pry

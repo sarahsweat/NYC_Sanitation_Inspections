@@ -11,16 +11,33 @@ class API_Comm
     all_restaurant_data = JSON.parse(rest)
   end
 
+  # find_restaurant_by_name "BEAST OF BOURBON"
+
   def self.find_unique_restaurants all_restaurant_data
     all_restaurant_data.uniq {|inspection| inspection["camis"]}
   end
 
   def self.find_by_boro all_restaurant_data, boro
-    all_restaurant_data.select {|inspection| inspection["boro"] == boro.upcase}
+    hash = {}
+    result = all_restaurant_data.select {|inspection| inspection["boro"] == boro.upcase}
+    hash["count"] = result.count
+    hash["results"] = result
+    hash
   end
 
   def self.find_by_zip all_restaurant_data, zip
-    all_restaurant_data.select {|inspection| inspection["zipcode"] == zip.to_s}
+    hash = {}
+    result = all_restaurant_data.select {|inspection| inspection["zipcode"] == zip.to_s}
+    hash["count"] = result.count
+    hash["results"] = result
+    hash
+  end
+
+  def self.find_streets all_restaurant_data
+    ary = []
+    all_restaurant_data["results"].each {|x| ary << {"street" => x["street"], "camis" => x["camis"]}}
+    ary.uniq! {|x| x["street"]}
+    ary
   end
 
   # return street names by alpha methods

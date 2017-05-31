@@ -1,5 +1,7 @@
 require "pry"
 
+require "./lib/api_communicator"
+
 class CLI
 
   attr_accessor :user
@@ -99,7 +101,98 @@ class CLI
 
   end
 
+  def search
+    puts "------SEARCH FOR A RESTAURANT------"
+    name_result = search_name
+    # check for nil return value
+    # puts "-----Returned #{name_result["count"]} result(s).-----"
+    if name_result["count"] == 1
+      return_restaurant name_result["results"]
+    else
+      ask_for_filter name_result
+    end
+  end
 
+  def return_restaurant data
+    id = data[0]["camis"]
+    name = data[0]["dba"]
+    puts "\nYou've found the record for #{name}."
+    puts "Please select from the following options: "
+    puts "1. Investigate this restaurant"
+    puts "2. Add this restaurant to your list"
 
+    selection = gets.chomp
+    case selection
+    when "1" then
+      puts "investigate_restaurant method"
+    when "2" then
+      puts "add_restaurant_to_list method"
+    else puts "error"
+    end
+  end
 
+  def investigate_restaurant
+    puts "investigate method"
+  end
+
+  def ask_for_filter hash
+    # true means available for use
+    boro = true
+    zipcode = true
+    # if one of these is false, do not allow to be re-run
+    puts "\n-----Returned #{hash["count"]} result(s).-----"
+    puts "Please select from the following filters: "
+    puts "1. Borough" unless boro == false
+    puts "2. Zipcode" unless zipcode == false
+
+    choice = gets.chomp
+    case choice
+    when "1" then
+      puts "\nPlease enter the borough:"
+      b = gets.chomp
+      new_results = API_Comm.find_by_boro hash["results"], b
+      boro = false
+      logic_gate new_results
+    when "2" then
+      puts "\nPlease enter the zipcode:"
+      z = gets.chomp
+      new_results = API_Comm.find_by_zip hash["results"], z
+      zipcode = false
+      logic_gate new_results
+    else puts "error"
+    end
+  end
+
+  def logic_gate hash
+    if hash["count"] < 20
+      print_addresses hash
+    else
+      ask_for_filter hash
+    end
+  end
+
+  def print_addresses hash
+    results_ary = API_Comm.find_streets hash
+    puts "\nPlease select a store location to continue: "
+    results_ary.each_with_index do |rest, index|
+      i = index + 1
+      puts "#{i}. #{rest["street"]}"
+    end
+    choice = gets.chomp
+    real_choice = choice.to_i - 1
+    real_data = results_ary[real_choice]
+    binding.pry
+  end
+
+  def search_name
+    hash = {}
+    puts "\nPlease enter a restaurant name: "
+    dba = gets.chomp.upcase
+    raw_result = API_Comm.find_restaurant_by_name dba
+    unique = API_Comm.find_unique_restaurants raw_result
+    count = unique.count
+    hash["count"] = count
+    hash["results"] = unique
+    hash
+  end
 end
