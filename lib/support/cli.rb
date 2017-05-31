@@ -61,7 +61,7 @@ class CLI
   def return_restaurant data
     id = data[0]["camis"]
     name = data[0]["dba"]
-    puts "You've found the record for #{name}."
+    puts "\nYou've found the record for #{name}."
     puts "Please select from the following options: "
     puts "1. Investigate this restaurant"
     puts "2. Add this restaurant to your list"
@@ -86,20 +86,20 @@ class CLI
     zipcode = true
     # if one of these is false, do not allow to be re-run
     puts "-----Returned #{hash["count"]} result(s).-----"
-    puts "Please select from the following filters: "
-    puts "1. Borough"
-    puts "2. Zipcode"
+    puts "\nPlease select from the following filters: "
+    puts "1. Borough" unless boro == false
+    puts "2. Zipcode" unless zipcode == false
 
     choice = gets.chomp
     case choice
     when "1" then
-      puts "Please enter the borough:"
+      puts "\nPlease enter the borough:"
       b = gets.chomp
       new_results = API_Comm.find_by_boro hash["results"], b
       boro = false
       logic_gate new_results
     when "2" then
-      puts "Please enter the zipcode:"
+      puts "\nPlease enter the zipcode:"
       z = gets.chomp
       new_results = API_Comm.find_by_zip hash["results"], z
       zipcode = false
@@ -109,7 +109,6 @@ class CLI
   end
 
   def logic_gate hash
-    binding.pry
     if hash["count"] < 20
       print_addresses hash
     else
@@ -118,12 +117,17 @@ class CLI
   end
 
   def print_addresses hash
-    
+    results_ary = API_Comm.find_streets hash
+    puts "Please select a store location to continue: "
+    results_ary.each_with_index do |rest, index|
+      i = index + 1
+      puts "#{i}. #{rest["street"]}"
+    end
   end
 
   def search_name
     hash = {}
-    puts "Please enter a restaurant name: "
+    puts "\nPlease enter a restaurant name: "
     dba = gets.chomp.upcase
     raw_result = API_Comm.find_restaurant_by_name dba
     unique = API_Comm.find_unique_restaurants raw_result

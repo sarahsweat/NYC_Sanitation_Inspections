@@ -33,6 +33,13 @@ class API_Comm
     hash
   end
 
+  def self.find_streets all_restaurant_data
+    ary = []
+    all_restaurant_data["results"].each {|x| ary << {"street" => x["street"], "camis" => x["camis"]}}
+    ary.uniq! {|x| x["street"]}
+    ary
+  end
+
   # Single Restaurant Unique ID methods
   def self.find_restaurant_data id
     # test with 41011367
