@@ -49,32 +49,58 @@ class CLI
   def search
     puts "------SEARCH FOR A RESTAURANT------"
     name_result = search_name
-    count = name_result["count"]
-    while count > 20
-    if count == 1
-      # return restaurant
+    # while !!name_result
+    #   puts "-----PLEASE SEARCH UNDER ANOTHER NAME-----"
+    #   name_result = search_name
+    # end
+    puts "-----Returned #{name_result["count"]} result(s).-----"
+    if name_result["count"] == 1
+      return_restaurant name_result["results"]
     else
-      # ask for next filter
+      ask_for_filter name_result["count"], name_result["results"]
     end
-    # print_addresses
   end
 
-  def return_restaurant
+  def count_logic count, data
+    while count > 20
+      if count == 1
+        puts rest_data["dba"]
+      else
+        ask_for_filter
+      end
+    end
+    print_addresses
+  end
 
+  def return_restaurant data
+    id = data[0]["camis"]
+    name = data[0]["dba"]
+    puts "You've found the record for #{name}."
+    puts "Please select from the following options: "
+    puts "1. Investigate this restaurant"
+    puts "2. Add this restaurant to your list"
+    selection = gets.chomp
+    case selection
+    when "1" then
+      puts "investigate_restaurant method"
+    when "2" then
+      puts "add_restaurant_to_list method"
+    else puts "error"
+    end
   end
 
   def ask_for_filter
-
+    puts "filter time"
   end
 
   def print_addresses
-
+    puts "addresses go here"
   end
 
   def search_name
     hash = {}
     puts "Please enter a restaurant name: "
-    dba = "gets.chomp.upcase"
+    dba = gets.chomp.upcase
     raw_result = API_Comm.find_restaurant_by_name dba
     unique = API_Comm.find_unique_restaurants raw_result
     count = unique.count

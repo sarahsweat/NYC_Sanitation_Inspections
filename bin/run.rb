@@ -4,6 +4,3 @@ require_relative "../config/environment"
 cli = CLI.new
 cli.search
 # cli.sign_up_or_login
-
-
-binding.pry
