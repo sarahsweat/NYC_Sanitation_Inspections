@@ -18,11 +18,19 @@ class API_Comm
   end
 
   def self.find_by_boro all_restaurant_data, boro
-    all_restaurant_data.select {|inspection| inspection["boro"] == boro.upcase}
+    hash = {}
+    result = all_restaurant_data.select {|inspection| inspection["boro"] == boro.upcase}
+    hash["count"] = result.count
+    hash["results"] = result
+    hash
   end
 
   def self.find_by_zip all_restaurant_data, zip
-    all_restaurant_data.select {|inspection| inspection["zipcode"] == zip.to_s}
+    hash = {}
+    result = all_restaurant_data.select {|inspection| inspection["zipcode"] == zip.to_s}
+    hash["count"] = result.count
+    hash["results"] = result
+    hash
   end
 
   # Single Restaurant Unique ID methods

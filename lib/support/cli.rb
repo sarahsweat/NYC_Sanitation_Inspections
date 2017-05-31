@@ -49,27 +49,13 @@ class CLI
   def search
     puts "------SEARCH FOR A RESTAURANT------"
     name_result = search_name
-    # while !!name_result
-    #   puts "-----PLEASE SEARCH UNDER ANOTHER NAME-----"
-    #   name_result = search_name
-    # end
-    puts "-----Returned #{name_result["count"]} result(s).-----"
+    # check for nil return value
+    # puts "-----Returned #{name_result["count"]} result(s).-----"
     if name_result["count"] == 1
       return_restaurant name_result["results"]
     else
-      ask_for_filter name_result["count"], name_result["results"]
+      ask_for_filter name_result
     end
-  end
-
-  def count_logic count, data
-    while count > 20
-      if count == 1
-        puts rest_data["dba"]
-      else
-        ask_for_filter
-      end
-    end
-    print_addresses
   end
 
   def return_restaurant data
@@ -80,6 +66,7 @@ class CLI
     puts "1. Investigate this restaurant"
     puts "2. Add this restaurant to your list"
     selection = gets.chomp
+
     case selection
     when "1" then
       puts "investigate_restaurant method"
@@ -89,8 +76,34 @@ class CLI
     end
   end
 
-  def ask_for_filter
-    puts "filter time"
+  def investigate_restaurant
+    puts "investigate method"
+  end
+
+  def ask_for_filter hash
+    # true means available for use
+    boro = true
+    zipcode = true
+    puts "-----Returned #{hash["count"]} result(s).-----"
+    puts "Please select from the following filters: "
+    puts "1. Borough"
+    puts "2. Zipcode"
+    choice = gets.chomp
+    case choice
+    when "1" then
+      puts "Please enter the borough:"
+      b = gets.chomp
+      new_results = API_Comm.find_by_boro hash["results"], b
+      boro = false
+      # call logic gate
+    when "2" then
+      puts "Please enter the zipcode:"
+      z = gets.chomp
+      new_results = API_Comm.find_by_zip hash["results"], z
+      zipcode = false
+      # call logic gate
+    else puts "error"
+    end
   end
 
   def print_addresses
