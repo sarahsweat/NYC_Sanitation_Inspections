@@ -3,6 +3,7 @@ require_relative "../config/environment"
 
 cli = CLI.new
 
-cli.get_user_info
+cli.sign_up_or_login
+
 
 binding.pry
