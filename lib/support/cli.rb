@@ -85,8 +85,8 @@ class CLI
     boro = true
     zipcode = true
     # if one of these is false, do not allow to be re-run
-    puts "-----Returned #{hash["count"]} result(s).-----"
-    puts "\nPlease select from the following filters: "
+    puts "\n-----Returned #{hash["count"]} result(s).-----"
+    puts "Please select from the following filters: "
     puts "1. Borough" unless boro == false
     puts "2. Zipcode" unless zipcode == false
 
@@ -118,11 +118,15 @@ class CLI
 
   def print_addresses hash
     results_ary = API_Comm.find_streets hash
-    puts "Please select a store location to continue: "
+    puts "\nPlease select a store location to continue: "
     results_ary.each_with_index do |rest, index|
       i = index + 1
       puts "#{i}. #{rest["street"]}"
     end
+    choice = gets.chomp
+    real_choice = choice.to_i - 1
+    real_data = results_ary[real_choice]
+    binding.pry
   end
 
   def search_name
