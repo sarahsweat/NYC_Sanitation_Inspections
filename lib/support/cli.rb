@@ -65,8 +65,8 @@ class CLI
     puts "Please select from the following options: "
     puts "1. Investigate this restaurant"
     puts "2. Add this restaurant to your list"
-    selection = gets.chomp
 
+    selection = gets.chomp
     case selection
     when "1" then
       puts "investigate_restaurant method"
@@ -84,10 +84,12 @@ class CLI
     # true means available for use
     boro = true
     zipcode = true
+    # if one of these is false, do not allow to be re-run
     puts "-----Returned #{hash["count"]} result(s).-----"
     puts "Please select from the following filters: "
     puts "1. Borough"
     puts "2. Zipcode"
+
     choice = gets.chomp
     case choice
     when "1" then
@@ -95,19 +97,28 @@ class CLI
       b = gets.chomp
       new_results = API_Comm.find_by_boro hash["results"], b
       boro = false
-      # call logic gate
+      logic_gate new_results
     when "2" then
       puts "Please enter the zipcode:"
       z = gets.chomp
       new_results = API_Comm.find_by_zip hash["results"], z
       zipcode = false
-      # call logic gate
+      logic_gate new_results
     else puts "error"
     end
   end
 
-  def print_addresses
-    puts "addresses go here"
+  def logic_gate hash
+    binding.pry
+    if hash["count"] < 20
+      print_addresses hash
+    else
+      ask_for_filter hash
+    end
+  end
+
+  def print_addresses hash
+    
   end
 
   def search_name
