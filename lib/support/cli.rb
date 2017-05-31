@@ -73,8 +73,7 @@ class CLI
       puts "Please enter a task number:"
       number = gets.chomp.downcase
       if number[0] == "1"
-        # executes search method
-
+        self.search
       elsif number[0] == "2"
         puts "------------------------------------------"
         puts "---------List of Good Restaurants---------"
