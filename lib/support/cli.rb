@@ -1,5 +1,7 @@
 require "pry"
 
+require "./lib/api_communicator"
+
 class CLI
 
   def initialize
@@ -29,7 +31,6 @@ class CLI
     puts "Please enter your desired Username."
     name = gets.chomp.downcase
     new_user = User.new(name)
-    binding.pry
     puts "Your username is:   #{new_user.username}"
   end
 
@@ -45,7 +46,40 @@ class CLI
     end
   end
 
+  def search
+    puts "------SEARCH FOR A RESTAURANT------"
+    name_result = search_name
+    count = name_result["count"]
+    while count > 20
+    if count == 1
+      # return restaurant
+    else
+      # ask for next filter
+    end
+    # print_addresses
+  end
 
+  def return_restaurant
 
+  end
 
+  def ask_for_filter
+
+  end
+
+  def print_addresses
+
+  end
+
+  def search_name
+    hash = {}
+    puts "Please enter a restaurant name: "
+    dba = "gets.chomp.upcase"
+    raw_result = API_Comm.find_restaurant_by_name dba
+    unique = API_Comm.find_unique_restaurants raw_result
+    count = unique.count
+    hash["count"] = count
+    hash["results"] = unique
+    hash
+  end
 end

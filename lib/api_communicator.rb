@@ -11,6 +11,8 @@ class API_Comm
     all_restaurant_data = JSON.parse(rest)
   end
 
+  # find_restaurant_by_name "BEAST OF BOURBON"
+
   def self.find_unique_restaurants all_restaurant_data
     all_restaurant_data.uniq {|inspection| inspection["camis"]}
   end
