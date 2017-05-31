@@ -7,7 +7,7 @@ class API_Comm
 
   # All Restaurant Results methods
   def self.find_restaurant_by_name name
-    rest = RestClient.get('https://data.cityofnewyork.us/resource/9w7m-hzhe.json?dba=' + name)
+    rest = RestClient.get('https://data.cityofnewyork.us/resource/9w7m-hzhe.json?dba=' + name.upcase)
     all_restaurant_data = JSON.parse(rest)
   end
 
@@ -30,19 +30,10 @@ class API_Comm
     uniq = all_restaurant_data.uniq {|x| x["street"]}
     uniq.each {|x| ary << x["street"]}
     ary.sort!
-    binding.pry
   end
 
-  #subway or starbucks
-
-  # camis
-  # name
-  # street
-  # boro
-  # zipcode
-  # phone
-  # grade
-  # score
+  # star = self.find_restaurant_by_name "STARBUCKS"
+  # return_street_names star
 
   # Single Restaurant Unique ID methods
   def self.find_restaurant_data id
@@ -61,10 +52,9 @@ class API_Comm
     hash["boro"] = rest["boro"]
     hash["zip"] = rest["zipcode"]
     hash["phone"] = rest["camis"]
-    binding.pry
   end
 
-  create_restaurant_hash 41011367
+  # create_restaurant_hash 41011367
 
   def self.select_all_violations restaurant_data
     restaurant_data.map! {|x| x["violation_description"]}

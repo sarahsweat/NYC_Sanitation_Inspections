@@ -5,6 +5,12 @@ require_relative 'api_communicator'
 
 class Parser
 
+  hot_list = {
+    pests: ["mouse", "mice", "roach", "fly", "flies"],
+    handling: ["cross-contamination", "not hot", "not warm", "not cold", "not cool", "unsanitary equipment"],
+    facility: ["worker hygiene", "hand-washing", "food storage", "food surfaces"]
+  }
+
   def self.search_restaurant_violations_by_id id, search_term
     result = nil
     regex = Regexp.new search_term
@@ -17,9 +23,5 @@ class Parser
       puts "Search for " + search_term + " returned " + false.to_s
     end
   end
-
-  # search_restaurant_violations_by_id 41011367, "roaches"
-
-  # parser based on pests, food handling, facility
 
 end
