@@ -1,7 +1,7 @@
 require 'json'
 require 'pry'
 
-require_relative 'api_communicator.rb'
+require_relative 'api_communicator'
 
 class Parser
 
@@ -18,6 +18,6 @@ class Parser
     end
   end
 
-  search_restaurant_violations_by_id 41011367, "roaches"
-  
+  # search_restaurant_violations_by_id 41011367, "roaches"
+
 end
