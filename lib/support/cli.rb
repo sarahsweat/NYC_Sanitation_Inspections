@@ -73,8 +73,7 @@ class CLI
       puts "Please enter a task number:"
       number = gets.chomp.downcase
       if number[0] == "1"
-        # executes search method
-
+        self.search
       elsif number[0] == "2"
         puts "------------------------------------------"
         puts "---------List of Good Restaurants---------"
@@ -126,9 +125,30 @@ class CLI
     when "1" then
       puts "investigate_restaurant method"
     when "2" then
-      puts "add_restaurant_to_list method"
+      select_and_save_to_list data[0]["camis"]
     else puts "error"
     end
+  end
+
+  def select_and_save_to_list id
+    # prepare the hash for the save method
+    good_or_bad = nil
+    hash = API_Comm.create_restaurant_hash id
+    # prompt for good or bad list
+    puts "\nWhat would you like to do with this restaurant? "
+    puts "1. I would like to visit"
+    puts "2. I would like to avoid"
+    choice = gets.chomp
+    case choice
+    when "1" then
+      good_or_bad = true
+    when "2" then
+      good_or_bad = false
+    else puts "error"
+    end
+    # instantiate new restaurant class / association with hash and boolean
+    self.user.save_restaurant_to_user(good_or_bad, hash)
+    puts "Successfully saved #{hash["name"]}."
   end
 
   def investigate_restaurant
@@ -181,7 +201,7 @@ class CLI
     choice = gets.chomp
     real_choice = choice.to_i - 1
     real_data = results_ary[real_choice]
-    binding.pry
+    select_and_save_to_list real_data["camis"]
   end
 
   def search_name

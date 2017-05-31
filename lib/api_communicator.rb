@@ -69,6 +69,7 @@ class API_Comm
     hash["boro"] = rest["boro"]
     hash["zip"] = rest["zipcode"]
     hash["phone"] = rest["camis"]
+    hash
   end
 
   # create_restaurant_hash 41011367
