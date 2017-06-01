@@ -8,10 +8,15 @@ class API_Comm
   # All Restaurant Results methods
   def self.find_restaurant_by_name name
     rest = RestClient.get('https://data.cityofnewyork.us/resource/9w7m-hzhe.json?dba=' + name.upcase)
-    all_restaurant_data = JSON.parse(rest)
+    JSON.parse(rest)
   end
 
-  # find_restaurant_by_name "BEAST OF BOURBON"
+  def self.find_result_by_fuzzy_name name
+    rest = RestClient.get('https://data.cityofnewyork.us/resource/9w7m-hzhe.json?$limit=5000&$where=starts_with(dba, "' + name.upcase + '")')
+    parsed = JSON.parse(rest)
+  end
+
+  # find_result_by_fuzzy_name "chipotle mexican grill"
 
   def self.find_unique_restaurants all_restaurant_data
     all_restaurant_data.uniq {|inspection| inspection["camis"]}
