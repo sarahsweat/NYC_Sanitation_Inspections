@@ -7,7 +7,7 @@ class CLI
   attr_accessor :user
 
   def initialize
-    puts "Hello and welcome to the best NYC Restaurant Sanitation Evaluation App!"
+    puts "Welcome to the best NYC Restaurant Sanitation Inspection App!"
     @user = nil
   end
 
@@ -64,32 +64,39 @@ class CLI
   def main_menu
     task = nil
     while task.nil?
-      puts "------------------------------------------"
+      puts "---------------------------------------------"
       puts "What would you like to do now?"
       puts "1. Search for a restaurant"
       puts "2. See list of saved good restaurants"
       puts "3. See list of saved restaurants to avoid"
       puts "4. Log out"
-      puts "------------------------------------------"
+      puts "5. Exit app"
+      puts "---------------------------------------------"
+      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      puts "     You can type menu at any point to"
+      puts "           return to this menu."
+      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+
+
       puts "Please enter a task number:"
       number = gets.chomp.downcase
       if number[0] == "1"
         self.search
       elsif number[0] == "2"
-        puts "------------------------------------------"
-        puts "---------List of Good Restaurants---------"
+        puts "---------------------------------------------"
+        puts "----------List of Good Restaurants-----------"
         self.user.saved_restaurants.where(good_or_bad: true).each_with_index do |rest, index|
           puts "#{index+1}. #{rest.restaurant.name} - #{rest.restaurant.street}"
         end
       elsif number[0] == "3"
-        puts "------------------------------------------"
-        puts "-------List of Restaurants to Avoid-------"
+        puts "---------------------------------------------"
+        puts "--------List of Restaurants to Avoid---------"
         self.user.saved_restaurants.where(good_or_bad: false).each_with_index do |rest, index|
           puts "#{index+1}. #{rest.restaurant.name} - #{rest.restaurant.street}"
         end
-      elsif number[0] == "4"
-        # Log out, start new cli instance
-        puts "Have a good day"
+      elsif number == "4"
+        logout
+      elsif number == "5"
         break
       else
         puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -98,7 +105,14 @@ class CLI
       end
     end
 
+  end
 
+  def logout
+      puts "         Goodbye #{self.user.first_name}! Come back again soon!"
+      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      self.user = nil
+      puts "\nWelcome to the best NYC Restaurant Sanitation Inspection App!"
+      sign_up_or_login
   end
 
   def search
@@ -121,6 +135,9 @@ class CLI
     puts "\nPlease enter a restaurant name: "
     while results == nil
       dba = gets.chomp.upcase
+      if dba == "MENU"
+        main_menu
+      end
       raw_result = API_Comm.find_restaurant_by_name dba
       unique = API_Comm.find_unique_restaurants raw_result
       hash["count"] = unique.count
@@ -131,7 +148,7 @@ class CLI
         puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         puts "   Restaurant not found! Please try again.   "
         puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        puts "\nPlease enter a restaurant name: "
+        puts "\nPlease enter a new restaurant name: "
       end
     end
     hash
@@ -192,20 +209,20 @@ class CLI
 
     choice = gets.chomp
     case choice
-    when "1" then
-      puts "\nPlease enter the borough:"
-      b = gets.chomp
-      new_results = API_Comm.find_by_boro hash["results"], b
-      boro = false
-      logic_gate new_results
-    when "2" then
-      puts "\nPlease enter the zipcode:"
-      z = gets.chomp
-      new_results = API_Comm.find_by_zip hash["results"], z
-      zipcode = false
-      logic_gate new_results
-    else puts "error"
-    end
+      when "1" then
+        puts "\nPlease enter the borough:"
+        b = gets.chomp
+        new_results = API_Comm.find_by_boro hash["results"], b
+        boro = false
+        logic_gate new_results
+      when "2" then
+        puts "\nPlease enter the zipcode:"
+        z = gets.chomp
+        new_results = API_Comm.find_by_zip hash["results"], z
+        zipcode = false
+        logic_gate new_results
+      else puts "error"
+      end
   end
 
   def logic_gate hash
