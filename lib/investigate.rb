@@ -9,18 +9,25 @@ class Investigate
 
   def self.init id
     json = API_Comm.find_restaurant_data id
+
     json.each do |x|
       date_str = x["inspection_date"]
       parsed_date = DateTime.parse(date_str)
       x["new_insp_date"] = parsed_date
     end
-    binding.pry
+
+    json.sort_by! {|x| x["new_insp_date"]}
+    most_recent = json.last
+    most_recent_date = most_recent["new_insp_date"].strftime("%m/%d/%Y")
+
     # list
       puts "Name: #{json.first["dba"]}"
       puts "Street: #{json.first["street"]}"
       puts "Borough: #{json.first["boro"]}"
-      # current grade
-      # most recent inspection date
+      puts "Current Grade: #{most_recent["grade"]}"
+      puts "Last inspection: #{most_recent_date}"
+      binding.pry
+
     # method / selection tree starts here
       # investigate most recent inspection
       # search investigation history
