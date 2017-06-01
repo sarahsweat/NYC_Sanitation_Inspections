@@ -2,6 +2,8 @@ require "pry"
 
 require "./lib/api_communicator"
 require "./lib/support/investigate"
+require "terminal-table"
+require "colorize"
 
 class CLI
   include Investigate
@@ -308,7 +310,7 @@ class CLI
   end
 
   def logic_gate hash
-    if hash["count"] < 20
+    if hash["count"] < 2000
       print_addresses hash
     else
       ask_for_filter hash
@@ -320,24 +322,49 @@ class CLI
     flag = nil
     while flag.nil?
       puts "\nPlease select a store location by number to continue: "
+      rows = []
       results_ary.each_with_index do |rest, index|
-        i = index + 1
-        puts "#{i}. #{rest["street"]}"
+        if rest["grade"] == "A"
+          rows << ["#{index+1}.", rest["street"], rest["grade"].green]
+        elsif rest["grade"] == "B"
+          rows << ["#{index+1}.", rest["street"], rest["grade"].yellow]
+        elsif rest["grade"] == "C"
+          rows << ["#{index+1}.", rest["street"], rest["grade"].red]
+        else
+          rows << ["#{index+1}.", rest["street"], rest["grade"]]
+        end
       end
-      choice = gets.chomp.downcase
-      if choice.to_i.to_s == choice && choice.to_i <= results_ary.length
-        real_choice = choice.to_i - 1
-        real_data = results_ary[real_choice]
-        select_and_save_to_list real_data["camis"]
+
+
+      table = Terminal::Table.new :title => "Your Search Results".cyan, :headings => ['Number'.cyan, 'Street'.cyan, 'Grade'.cyan], :rows => rows.first(20), :style => {:width => 80}
+      puts table
+
+      if rows.count < 20
         flag = true
-      elsif choice == "menu"
-        return main_menu
-      elsif choice == "back"
-        ask_for_filter hash
-      else
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        puts "   Sorry, your response was not recognized."
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      end
+
+
+      while rows.count > 20
+        puts "You can type NEXT for more or select a restaurant"
+        choice = gets.chomp.downcase
+        if choice == "next"
+          rows.shift(20)
+          table.rows = rows.first(20)
+          puts table
+        elsif choice.to_i.to_s == choice && choice.to_i <= results_ary.length
+          real_choice = choice.to_i - 1
+          real_data = results_ary[real_choice]
+          select_and_save_to_list real_data["camis"]
+          flag = true
+        elsif choice == "menu"
+          return main_menu
+        elsif choice == "back"
+          ask_for_filter hash
+        else
+          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+          puts "   Sorry, your response was not recognized."
+          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        end
       end
     end
   end

@@ -39,7 +39,7 @@ class API_Comm
 
   def self.find_streets all_restaurant_data
     ary = []
-    all_restaurant_data["results"].each {|x| ary << {"street" => x["street"], "camis" => x["camis"]}}
+    all_restaurant_data["results"].each {|x| ary << {"street" => x["street"], "grade" => x["grade"], "camis" => x["camis"]}}
     ary.uniq! {|x| x["street"]}
     ary
   end
