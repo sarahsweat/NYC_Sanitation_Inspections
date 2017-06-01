@@ -28,9 +28,24 @@ class Investigate
       puts "Last inspection: #{most_recent_date}"
       binding.pry
 
-    # method / selection tree starts here
-      # investigate most recent inspection
-      # search investigation history
+    #
+    #
+    # SELECTION tree starts here
+    #
+    #
+
+      # Investigate the most recent inspection?
+        # Score
+        # Notes
+      # Investigate full inspection history?
+        # Violation hot list:
+          # pests
+          # handling
+          # facility
+        # Would you like to search for a violation term?
+        # See all inspections/violations
+
+        
   end
 
   init 41011367
