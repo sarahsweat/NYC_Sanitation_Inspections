@@ -1,6 +1,7 @@
 require "pry"
 
 require "./lib/api_communicator"
+require "./lib/investigate"
 
 class CLI
 
@@ -96,15 +97,16 @@ class CLI
         puts "`````````````````````````````````````````````"
       end
     end
-
-
   end
+
+  # add while loops to ensure correct input
 
   def search
     puts "------SEARCH FOR A RESTAURANT------"
     name_result = search_name
+    #
     # check for nil return value
-    # puts "-----Returned #{name_result["count"]} result(s).-----"
+    #
     if name_result["count"] == 1
       return_restaurant name_result["results"]
     else
@@ -156,14 +158,11 @@ class CLI
   end
 
   def ask_for_filter hash
-    # true means available for use
-    boro = true
-    zipcode = true
     # if one of these is false, do not allow to be re-run
     puts "\n-----Returned #{hash["count"]} result(s).-----"
     puts "Please select from the following filters: "
-    puts "1. Borough" unless boro == false
-    puts "2. Zipcode" unless zipcode == false
+    puts "1. Borough"
+    puts "2. Zipcode"
 
     choice = gets.chomp
     case choice
@@ -171,13 +170,11 @@ class CLI
       puts "\nPlease enter the borough:"
       b = gets.chomp
       new_results = API_Comm.find_by_boro hash["results"], b
-      boro = false
       logic_gate new_results
     when "2" then
       puts "\nPlease enter the zipcode:"
       z = gets.chomp
       new_results = API_Comm.find_by_zip hash["results"], z
-      zipcode = false
       logic_gate new_results
     else puts "error"
     end
