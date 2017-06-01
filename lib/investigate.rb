@@ -10,7 +10,6 @@ class Investigate
   attr_accessor :id
 
   def self.init id
-
     @id = id
 
     json = API_Comm.find_restaurant_data id
@@ -23,6 +22,8 @@ class Investigate
     json.sort_by! {|x| x["new_insp_date"]}
     most_recent = json.last
     most_recent_date = most_recent["new_insp_date"].strftime("%m/%d/%Y")
+
+    binding.pry
 
     puts "\nName: #{json.first["dba"]}"
     puts "Street: #{json.first["street"]}"
