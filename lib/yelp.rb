@@ -13,6 +13,4 @@ class Yelp
     parsed["businesses"]
   end
 
-  # search_yelp_by_phone '7187985820'
-
 end

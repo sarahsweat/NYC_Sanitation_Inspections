@@ -1,18 +1,12 @@
 require 'rest-client'
 require 'json'
 require 'pry'
+require './lib/parser'
+require './lib/api_communicator'
+require './lib/yelp'
 
-require_relative 'parser'
-require_relative 'api_communicator'
-require_relative 'yelp'
-
-class Investigate
-
-  attr_accessor :id
-
-  def self.init id
-    @id = id
-
+module Investigate
+  def init id
     json = API_Comm.find_restaurant_data id
     json.each do |x|
       date_str = x["inspection_date"]
@@ -30,13 +24,10 @@ class Investigate
     puts "Current Grade: #{most_recent["grade"]}"
     puts "Last inspection: #{most_recent_date}"
 
-    yelp_results = Yelp.search_yelp_by_phone most_recent["phone"]
-
-    # binding.pry
-    # Yelp stuff
-    puts "Price: #{yelp_results.first["price"]}"
-    puts "Open for business? #{yelp_results.first["is_closed"] ? 'Closed' : 'Open'}"
-    puts "Current rating: #{yelp_results.first["rating"]}"
+    # yelp_results = Yelp.search_yelp_by_phone most_recent["phone"]
+    # puts "Price: #{yelp_results.first["price"]}"
+    # puts "Open for business? #{yelp_results.first["is_closed"] ? 'Closed' : 'Open'}"
+    # puts "Current rating: #{yelp_results.first["rating"]}"
 
     puts "\nPlease select: "
     puts "1. Investigate the most recent inspection, or"
@@ -52,23 +43,23 @@ class Investigate
       when "2"
         search_all_inspections json
       when "3"
-        puts "Place return to restaurant menu here >>"
+        select_and_save_to_list id
       end
     end
   end
 
-  def self.most_recent_inspection score, vio
+  def most_recent_inspection score, vio
     puts "\nScore (lower is better): #{score}"
     puts "Inspection notes: #{vio}"
     puts "\n1. Return to inspection menu?"
     choice = nil
     while choice != "1"
       choice = gets.chomp
-      init @id if choice == "1"
+      init id if choice == "1"
     end
   end
 
-  def self.search_all_inspections json
+  def search_all_inspections json
     puts "\nPlease select: "
     puts "1. Search for something specific, or"
     puts "2. Investigate entire inspection history"
@@ -79,13 +70,13 @@ class Investigate
       when "1"
         puts "\nWhich term would you like to search for?"
         term = gets.chomp
-        search_result = Parser.search_restaurant_violations @id, term
+        search_result = Parser.search_restaurant_violations id, term
         puts "\n1. Return to inspection menu?"
         # puts "2. Search for another term"
         choice = nil
         while choice != "1"
           choice = gets.chomp
-          init @id if choice == "1"
+          init id if choice == "1"
         end
       when "2"
         violation_ary = []
@@ -100,12 +91,9 @@ class Investigate
         choice = nil
         while choice != "1"
           choice = gets.chomp
-          init @id if choice == "1"
+          init id if choice == "1"
         end
       end
     end
   end
-
-  init 41011367
-
 end

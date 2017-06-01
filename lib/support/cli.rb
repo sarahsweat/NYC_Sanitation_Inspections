@@ -1,10 +1,10 @@
 require "pry"
 
 require "./lib/api_communicator"
-require "./lib/investigate"
+require "./lib/support/investigate"
 
 class CLI
-
+  include Investigate
   attr_accessor :user
 
   def initialize
@@ -43,8 +43,7 @@ class CLI
     end
     puts "Thanks, #{new_user.first_name.capitalize} #{new_user.last_name.capitalize}."
     puts "Your username is:   #{new_user.username}"
-
-    new_user
+    self.user = new_user
   end
 
   def login
@@ -156,23 +155,23 @@ class CLI
     hash
   end
 
-  def return_restaurant data
-    id = data[0]["camis"]
-    name = data[0]["dba"]
-    puts "\nYou've found the record for #{name}."
-    puts "Please select from the following options: "
-    puts "1. Investigate this restaurant"
-    puts "2. Add this restaurant to your list"
-
-    selection = gets.chomp
-    case selection
-    when "1" then
-      puts investigate_restaurant id
-    when "2" then
-      select_and_save_to_list data[0]["camis"]
-    else puts "error"
-    end
-  end
+  # def return_restaurant data
+  #   id = data[0]["camis"]
+  #   name = data[0]["dba"]
+  #   puts "\nYou've found the record for #{name}."
+  #   puts "Please select from the following options: "
+  #   puts "1. Investigate this restaurant"
+  #   puts "2. Add this restaurant to your list"
+  #
+  #   selection = gets.chomp
+  #   case selection
+  #   when "1" then
+  #     binding.pry
+  #   when "2" then
+  #     select_and_save_to_list data[0]["camis"]
+  #   else puts "error"
+  #   end
+  # end
 
   def select_and_save_to_list id
     # prepare the hash for the save method
@@ -183,12 +182,15 @@ class CLI
       puts "\nWhat would you like to do with this restaurant? "
       puts "1. I would like to visit"
       puts "2. I would like to avoid"
+      puts "3. Investigate this restaurant"
       choice = gets.chomp.downcase
       case choice
       when "1" then
         good_or_bad = true
       when "2" then
         good_or_bad = false
+      when "3" then
+        init id
       when "menu" then
         return main_menu
       else
@@ -201,10 +203,7 @@ class CLI
     # instantiate new restaurant class / association with hash and boolean
     self.user.save_restaurant_to_user(good_or_bad, hash)
     puts "Successfully saved #{hash["name"]}."
-  end
-
-  def investigate_restaurant(id)
-    Investigate.init
+    main_menu
   end
 
   def ask_for_filter hash
@@ -326,7 +325,7 @@ class CLI
         puts "#{i}. #{rest["street"]}"
       end
       choice = gets.chomp.downcase
-      if choice.to_i.to_s == choice && choice.to_i < results_ary.length
+      if choice.to_i.to_s == choice && choice.to_i <= results_ary.length
         real_choice = choice.to_i - 1
         real_data = results_ary[real_choice]
         select_and_save_to_list real_data["camis"]
