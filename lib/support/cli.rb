@@ -155,23 +155,23 @@ class CLI
     hash
   end
 
-  # def return_restaurant data
-  #   id = data[0]["camis"]
-  #   name = data[0]["dba"]
-  #   puts "\nYou've found the record for #{name}."
-  #   puts "Please select from the following options: "
-  #   puts "1. Investigate this restaurant"
-  #   puts "2. Add this restaurant to your list"
-  #
-  #   selection = gets.chomp
-  #   case selection
-  #   when "1" then
-  #     binding.pry
-  #   when "2" then
-  #     select_and_save_to_list data[0]["camis"]
-  #   else puts "error"
-  #   end
-  # end
+  def return_restaurant data
+    id = data[0]["camis"]
+    name = data[0]["dba"]
+    puts "\nYou've found the record for #{name}."
+    puts "Please select from the following options: "
+    puts "1. Investigate this restaurant"
+    puts "2. Add this restaurant to your list"
+
+    selection = gets.chomp
+    case selection
+    when "1" then
+      init id
+    when "2" then
+      select_and_save_to_list data[0]["camis"]
+    else puts "error"
+    end
+  end
 
   def select_and_save_to_list id
     # prepare the hash for the save method

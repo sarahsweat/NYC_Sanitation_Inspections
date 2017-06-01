@@ -18,16 +18,18 @@ module Investigate
     most_recent = json.last
     most_recent_date = most_recent["new_insp_date"].strftime("%m/%d/%Y")
 
+    yelp_results = Yelp.search_yelp_by_phone most_recent["phone"]
+
     puts "\nName: #{json.first["dba"]}"
     puts "Street: #{json.first["street"]}"
     puts "Borough: #{json.first["boro"]}"
     puts "Current Grade: #{most_recent["grade"]}"
     puts "Last inspection: #{most_recent_date}"
-
-    # yelp_results = Yelp.search_yelp_by_phone most_recent["phone"]
-    # puts "Price: #{yelp_results.first["price"]}"
-    # puts "Open for business? #{yelp_results.first["is_closed"] ? 'Closed' : 'Open'}"
-    # puts "Current rating: #{yelp_results.first["rating"]}"
+    unless yelp_results.empty? || yelp_results["businesses"].empty?
+      puts "Price: #{yelp_results.first["price"]}"
+      puts "Open for business? #{yelp_results.first["is_closed"] ? 'Closed' : 'Open'}"
+      puts "Current rating: #{yelp_results.first["rating"]}"
+    end
 
     puts "\nPlease select: "
     puts "1. Investigate the most recent inspection, or"
