@@ -70,6 +70,7 @@ class CLI
       puts "2. See list of saved good restaurants"
       puts "3. See list of saved restaurants to avoid"
       puts "4. Log out"
+      puts "------------------------------------------"
       puts "Please enter a task number:"
       number = gets.chomp.downcase
       if number[0] == "1"
@@ -91,9 +92,9 @@ class CLI
         puts "Have a good day"
         break
       else
-        puts "`````````````````````````````````````````````"
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         puts "Task number not recognized! Please try again."
-        puts "`````````````````````````````````````````````"
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
       end
     end
 
@@ -101,7 +102,9 @@ class CLI
   end
 
   def search
-    puts "------SEARCH FOR A RESTAURANT------"
+    puts "------------------------------------------"
+    puts "---------Search for a Restaurant----------"
+    puts "------------------------------------------"
     name_result = search_name
     # check for nil return value
     # puts "-----Returned #{name_result["count"]} result(s).-----"
@@ -110,6 +113,28 @@ class CLI
     else
       ask_for_filter name_result
     end
+  end
+
+  def search_name
+    hash = {}
+    results = nil
+    puts "\nPlease enter a restaurant name: "
+    while results == nil
+      dba = gets.chomp.upcase
+      raw_result = API_Comm.find_restaurant_by_name dba
+      unique = API_Comm.find_unique_restaurants raw_result
+      hash["count"] = unique.count
+      hash["results"] = unique
+      if unique.count > 0
+        results = true
+      else
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "   Restaurant not found! Please try again.   "
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "\nPlease enter a restaurant name: "
+      end
+    end
+    hash
   end
 
   def return_restaurant data
@@ -123,7 +148,7 @@ class CLI
     selection = gets.chomp
     case selection
     when "1" then
-      puts "investigate_restaurant method"
+      puts investigate_restaurant id
     when "2" then
       select_and_save_to_list data[0]["camis"]
     else puts "error"
@@ -151,8 +176,8 @@ class CLI
     puts "Successfully saved #{hash["name"]}."
   end
 
-  def investigate_restaurant
-    puts "investigate method"
+  def investigate_restaurant(id)
+    Investigate.init
   end
 
   def ask_for_filter hash
@@ -204,15 +229,5 @@ class CLI
     select_and_save_to_list real_data["camis"]
   end
 
-  def search_name
-    hash = {}
-    puts "\nPlease enter a restaurant name: "
-    dba = gets.chomp.upcase
-    raw_result = API_Comm.find_restaurant_by_name dba
-    unique = API_Comm.find_unique_restaurants raw_result
-    count = unique.count
-    hash["count"] = count
-    hash["results"] = unique
-    hash
-  end
+
 end
