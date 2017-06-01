@@ -2,7 +2,6 @@ require 'rest-client'
 require 'json'
 require 'pry'
 
-# KFC single restaurant example
 class API_Comm
 
   # All Restaurant Results methods

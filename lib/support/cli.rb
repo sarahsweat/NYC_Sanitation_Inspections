@@ -1,6 +1,7 @@
 require "pry"
 
 require "./lib/api_communicator"
+require "./lib/investigate"
 
 class CLI
 
@@ -77,8 +78,6 @@ class CLI
       puts "  return to this menu, or press back at any "
       puts "      to return to the previous stage."
       puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-
-
       puts "Please enter a task number:"
       number = gets.chomp.downcase
       if number[0] == "1"
@@ -105,7 +104,6 @@ class CLI
         puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
       end
     end
-
   end
 
   def logout
@@ -116,13 +114,16 @@ class CLI
       sign_up_or_login
   end
 
+  # add while loops to ensure correct input
+
   def search
     puts "---------------------------------------------"
     puts "----------Search for a Restaurant------------"
     puts "---------------------------------------------"
     name_result = search_name
+    #
     # check for nil return value
-    # puts "-----Returned #{name_result["count"]} result(s).-----"
+    #
     if name_result["count"] == 1
       return_restaurant name_result["results"]
     else
@@ -341,6 +342,4 @@ class CLI
       end
     end
   end
-
-
 end
