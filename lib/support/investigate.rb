@@ -24,10 +24,12 @@ module Investigate
     puts "Current Grade: #{most_recent["grade"]}"
     puts "Last inspection: #{most_recent_date}"
 
-    # yelp_results = Yelp.search_yelp_by_phone most_recent["phone"]
-    # puts "Price: #{yelp_results.first["price"]}"
-    # puts "Open for business? #{yelp_results.first["is_closed"] ? 'Closed' : 'Open'}"
-    # puts "Current rating: #{yelp_results.first["rating"]}"
+    yelp_results = Yelp.search_yelp_by_phone most_recent["phone"]
+    unless yelp_results.empty? || yelp_results.first.empty?
+      puts "Price: #{yelp_results.first["price"]}"
+      puts "Open for business? #{yelp_results.first["is_closed"] ? 'Closed' : 'Open'}"
+      puts "Current rating: #{yelp_results.first["rating"]}"
+    end
 
     puts "\nPlease select: "
     puts "1. Investigate the most recent inspection, or"
