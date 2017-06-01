@@ -65,13 +65,13 @@ class CLI
     task = nil
     while task.nil?
       puts "---------------------------------------------"
-      puts "What would you like to do now?"
+      puts "~~~~~         M A I N  M E N U          ~~~~~"
+      puts "---------------------------------------------"
       puts "1. Search for a restaurant"
       puts "2. See list of saved good restaurants"
       puts "3. See list of saved restaurants to avoid"
       puts "4. Log out"
       puts "5. Exit app"
-      puts "---------------------------------------------"
       puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
       puts "     You can type menu at any point to"
       puts "           return to this menu."
@@ -116,9 +116,9 @@ class CLI
   end
 
   def search
-    puts "------------------------------------------"
-    puts "---------Search for a Restaurant----------"
-    puts "------------------------------------------"
+    puts "---------------------------------------------"
+    puts "----------Search for a Restaurant------------"
+    puts "---------------------------------------------"
     name_result = search_name
     # check for nil return value
     # puts "-----Returned #{name_result["count"]} result(s).-----"
@@ -198,31 +198,64 @@ class CLI
   end
 
   def ask_for_filter hash
-    # true means available for use
-    boro = true
-    zipcode = true
-    # if one of these is false, do not allow to be re-run
-    puts "\n-----Returned #{hash["count"]} result(s).-----"
-    puts "Please select from the following filters: "
-    puts "1. Borough" unless boro == false
-    puts "2. Zipcode" unless zipcode == false
-
-    choice = gets.chomp
+    puts "\n----------Returned #{hash["count"]} result(s).----------"
+    puts "\nPlease select from the following filters: "
+    puts "1. Borough"
+    puts "2. Zipcode"
+    choice = gets.chomp.upcase
     case choice
       when "1" then
-        puts "\nPlease enter the borough:"
-        b = gets.chomp
-        new_results = API_Comm.find_by_boro hash["results"], b
-        boro = false
-        logic_gate new_results
+        search_by_borough hash
       when "2" then
-        puts "\nPlease enter the zipcode:"
-        z = gets.chomp
-        new_results = API_Comm.find_by_zip hash["results"], z
-        zipcode = false
-        logic_gate new_results
+        search_by_zipcode hash
+      when "MENU"
+        main_menu
       else puts "error"
       end
+  end
+
+  def search_by_zipcode(hash)
+    flag = nil
+    while flag.nil?
+      puts "\nPlease enter the zipcode:"
+      z = gets.chomp.downcase
+      if z.to_i.to_s != z || z.length != 5
+        puts "Zipcode must be a 5 digit number"
+      else
+        flag = true
+        new_results = API_Comm.find_by_zip hash["results"], z
+        logic_gate new_results
+      end
+    end
+  end
+
+  def search_by_borough(hash)
+    
+      puts "Available Boroughs:"
+      puts "1. Manhattan"
+      puts "2. Brooklyn"
+      puts "3. Queens"
+      puts "4. Bronx"
+      puts "5. Staten Island"
+      puts "6. Go back to filter options"
+      puts "\nPlease select a number:"
+      b = gets.chomp.upcase
+      case b
+        when "1" , "MANHATTAN" then
+          b = "MANHATTAN"
+        when "2" , "BROOKLYN" then
+          b = "BROOKLYN"
+        when "3" , "QUEENS" then
+          b = "QUEENS"
+        when "4" , "BRONX" then
+          b = "BRONX"
+        when "5" , "STATEN ISLAND" then
+          b = "STATEN ISLAND"
+        when "6" then
+           return ask_for_filter(hash)
+        end
+      new_results = API_Comm.find_by_boro hash["results"], b
+      logic_gate new_results
   end
 
   def logic_gate hash
