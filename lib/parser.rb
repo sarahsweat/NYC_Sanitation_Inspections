@@ -11,7 +11,7 @@ class Parser
     facility: ["worker hygiene", "hand-washing", "food storage", "food surfaces"]
   }
 
-  def self.search_restaurant_violations_by_id id, search_term
+  def self.search_restaurant_violations id, search_term
     result = nil
     regex = Regexp.new search_term
     data = API_Comm.find_restaurant_data id
