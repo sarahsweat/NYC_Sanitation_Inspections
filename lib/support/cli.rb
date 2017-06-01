@@ -8,7 +8,7 @@ class CLI
   attr_accessor :user
 
   def initialize
-    puts "Hello and welcome to the best NYC Restaurant Sanitation Evaluation App!"
+    puts "Welcome to the best NYC Restaurant Sanitation Inspection App!"
     @user = nil
   end
 
@@ -65,44 +65,61 @@ class CLI
   def main_menu
     task = nil
     while task.nil?
-      puts "------------------------------------------"
-      puts "What would you like to do now?"
+      puts "---------------------------------------------"
+      puts "~~~~~         M A I N  M E N U          ~~~~~"
+      puts "---------------------------------------------"
       puts "1. Search for a restaurant"
       puts "2. See list of saved good restaurants"
       puts "3. See list of saved restaurants to avoid"
       puts "4. Log out"
+      puts "5. Exit app"
+      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      puts "     You can type menu at any point to"
+      puts "  return to this menu, or press back at any "
+      puts "      to return to the previous stage."
+      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
       puts "Please enter a task number:"
       number = gets.chomp.downcase
       if number[0] == "1"
         self.search
       elsif number[0] == "2"
-        puts "------------------------------------------"
-        puts "---------List of Good Restaurants---------"
+        puts "---------------------------------------------"
+        puts "----------List of Good Restaurants-----------"
         self.user.saved_restaurants.where(good_or_bad: true).each_with_index do |rest, index|
           puts "#{index+1}. #{rest.restaurant.name} - #{rest.restaurant.street}"
         end
       elsif number[0] == "3"
-        puts "------------------------------------------"
-        puts "-------List of Restaurants to Avoid-------"
+        puts "---------------------------------------------"
+        puts "--------List of Restaurants to Avoid---------"
         self.user.saved_restaurants.where(good_or_bad: false).each_with_index do |rest, index|
           puts "#{index+1}. #{rest.restaurant.name} - #{rest.restaurant.street}"
         end
-      elsif number[0] == "4"
-        # Log out, start new cli instance
-        puts "Have a good day"
+      elsif number == "4"
+        logout
+      elsif number == "5"
         break
       else
-        puts "`````````````````````````````````````````````"
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         puts "Task number not recognized! Please try again."
-        puts "`````````````````````````````````````````````"
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
       end
     end
+  end
+
+  def logout
+      puts "         Goodbye #{self.user.first_name}! Come back again soon!"
+      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      self.user = nil
+      puts "\nWelcome to the best NYC Restaurant Sanitation Inspection App!"
+      sign_up_or_login
   end
 
   # add while loops to ensure correct input
 
   def search
-    puts "------SEARCH FOR A RESTAURANT------"
+    puts "---------------------------------------------"
+    puts "----------Search for a Restaurant------------"
+    puts "---------------------------------------------"
     name_result = search_name
     #
     # check for nil return value
@@ -112,6 +129,31 @@ class CLI
     else
       ask_for_filter name_result
     end
+  end
+
+  def search_name
+    hash = {}
+    results = nil
+    puts "\nPlease enter a restaurant name: "
+    while results == nil
+      dba = gets.chomp.upcase
+      if dba == "MENU"
+        main_menu
+      end
+      raw_result = API_Comm.find_restaurant_by_name dba
+      unique = API_Comm.find_unique_restaurants raw_result
+      hash["count"] = unique.count
+      hash["results"] = unique
+      if unique.count > 0
+        results = true
+      else
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "   Restaurant not found! Please try again.   "
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "\nPlease enter a new restaurant name: "
+      end
+    end
+    hash
   end
 
   def return_restaurant data
@@ -125,7 +167,7 @@ class CLI
     selection = gets.chomp
     case selection
     when "1" then
-      puts "investigate_restaurant method"
+      puts investigate_restaurant id
     when "2" then
       select_and_save_to_list data[0]["camis"]
     else puts "error"
@@ -137,47 +179,133 @@ class CLI
     good_or_bad = nil
     hash = API_Comm.create_restaurant_hash id
     # prompt for good or bad list
-    puts "\nWhat would you like to do with this restaurant? "
-    puts "1. I would like to visit"
-    puts "2. I would like to avoid"
-    choice = gets.chomp
-    case choice
-    when "1" then
-      good_or_bad = true
-    when "2" then
-      good_or_bad = false
-    else puts "error"
+    while good_or_bad.nil?
+      puts "\nWhat would you like to do with this restaurant? "
+      puts "1. I would like to visit"
+      puts "2. I would like to avoid"
+      choice = gets.chomp.downcase
+      case choice
+      when "1" then
+        good_or_bad = true
+      when "2" then
+        good_or_bad = false
+      when "menu" then
+        return main_menu
+      else
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "Your response was not recognized. Try again."
+        puts "   Remember to enter menu to start over."
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      end
     end
     # instantiate new restaurant class / association with hash and boolean
     self.user.save_restaurant_to_user(good_or_bad, hash)
     puts "Successfully saved #{hash["name"]}."
   end
 
-  def investigate_restaurant
-    puts "investigate method"
+  def investigate_restaurant(id)
+    Investigate.init
   end
 
   def ask_for_filter hash
-    # if one of these is false, do not allow to be re-run
-    puts "\n-----Returned #{hash["count"]} result(s).-----"
-    puts "Please select from the following filters: "
-    puts "1. Borough"
-    puts "2. Zipcode"
+    puts "\n----------Returned #{hash["count"]} result(s).----------"
+    flag = nil
+    while flag.nil?
+      puts "\nPlease select from the following filters: "
+      puts "1. Borough"
+      puts "2. Zipcode"
+      choice = gets.chomp.upcase
+      case choice
+        when "1" then
+          search_by_borough hash
+        when "2" then
+          search_by_zipcode hash
+        when "MENU"
+          main_menu
+        when "back"
+          search
+        else
+          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+          puts "  Your input was not recognized, please try again."
+          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        end
+      end
+  end
 
-    choice = gets.chomp
-    case choice
-    when "1" then
-      puts "\nPlease enter the borough:"
-      b = gets.chomp
-      new_results = API_Comm.find_by_boro hash["results"], b
-      logic_gate new_results
-    when "2" then
-      puts "\nPlease enter the zipcode:"
-      z = gets.chomp
-      new_results = API_Comm.find_by_zip hash["results"], z
-      logic_gate new_results
-    else puts "error"
+  def search_by_zipcode(hash)
+    flag = nil
+    while flag.nil?
+      puts "\nPlease enter the zipcode or press 1 to go back to filter options"
+      z = gets.chomp.downcase
+      if z == "1" || z == "back"
+        ask_for_filter(hash)
+      elsif z == "menu"
+        main_menu
+      elsif z.to_i.to_s != z || z.length != 5
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "      Zipcode must be a 5 digit number"
+        puts "   Remember to enter menu to start over,  "
+        puts "    or 1 to go back to the filter options."
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      else
+        flag = true
+        new_results = API_Comm.find_by_zip hash["results"], z
+        if new_results["count"] == 0
+          flag = nil
+          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+          puts "There are no locations within the specified zipcode."
+          puts "                Please try again. "
+          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        else
+          logic_gate new_results
+        end
+      end
     end
+  end
+
+  def search_by_borough(hash)
+    flag = nil
+    while flag.nil?
+      puts "Available Boroughs:"
+      puts "1. Manhattan"
+      puts "2. Brooklyn"
+      puts "3. Queens"
+      puts "4. Bronx"
+      puts "5. Staten Island"
+      puts "6. Go back to filter options"
+      puts "7. Go back to search"
+      puts "8. Go back to main menu"
+      puts "\nPlease select a number:"
+      b = gets.chomp.upcase
+      flag = false
+      case b
+        when "1" , "MANHATTAN" then
+          boro = "MANHATTAN"
+        when "2" , "BROOKLYN" then
+          boro = "BROOKLYN"
+        when "3" , "QUEENS" then
+          boro = "QUEENS"
+        when "4" , "BRONX" then
+          boro = "BRONX"
+        when "5" , "STATEN ISLAND" then
+          boro = "STATEN ISLAND"
+        when "6" then
+           return ask_for_filter(hash)
+         when "7" then
+           return search
+         when "8", "menu" then
+           return main_menu
+         when "back" then
+           ask_for_filter hash
+        else
+          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+          puts "   Sorry, your response was not recognized."
+          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+          flag = nil
+        end
+    end
+    new_results = API_Comm.find_by_boro hash["results"], boro
+    logic_gate new_results
   end
 
   def logic_gate hash
@@ -190,26 +318,28 @@ class CLI
 
   def print_addresses hash
     results_ary = API_Comm.find_streets hash
-    puts "\nPlease select a store location to continue: "
-    results_ary.each_with_index do |rest, index|
-      i = index + 1
-      puts "#{i}. #{rest["street"]}"
+    flag = nil
+    while flag.nil?
+      puts "\nPlease select a store location by number to continue: "
+      results_ary.each_with_index do |rest, index|
+        i = index + 1
+        puts "#{i}. #{rest["street"]}"
+      end
+      choice = gets.chomp.downcase
+      if choice.to_i.to_s == choice && choice.to_i < results_ary.length
+        real_choice = choice.to_i - 1
+        real_data = results_ary[real_choice]
+        select_and_save_to_list real_data["camis"]
+        flag = true
+      elsif choice == "menu"
+        return main_menu
+      elsif choice == "back"
+        ask_for_filter hash
+      else
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "   Sorry, your response was not recognized."
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      end
     end
-    choice = gets.chomp
-    real_choice = choice.to_i - 1
-    real_data = results_ary[real_choice]
-    select_and_save_to_list real_data["camis"]
-  end
-
-  def search_name
-    hash = {}
-    puts "\nPlease enter a restaurant name: "
-    dba = gets.chomp.upcase
-    raw_result = API_Comm.find_restaurant_by_name dba
-    unique = API_Comm.find_unique_restaurants raw_result
-    count = unique.count
-    hash["count"] = count
-    hash["results"] = unique
-    hash
   end
 end
