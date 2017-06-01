@@ -2,8 +2,9 @@ require 'rest-client'
 require 'json'
 require 'pry'
 
-require_relative "parser"
-require_relative "api_communicator"
+require_relative 'parser'
+require_relative 'api_communicator'
+require_relative 'yelp'
 
 class Investigate
 
@@ -23,20 +24,27 @@ class Investigate
     most_recent = json.last
     most_recent_date = most_recent["new_insp_date"].strftime("%m/%d/%Y")
 
-    binding.pry
-
     puts "\nName: #{json.first["dba"]}"
     puts "Street: #{json.first["street"]}"
     puts "Borough: #{json.first["boro"]}"
     puts "Current Grade: #{most_recent["grade"]}"
     puts "Last inspection: #{most_recent_date}"
 
+    yelp_results = Yelp.search_yelp_by_phone most_recent["phone"]
+
+    # binding.pry
+    # Yelp stuff
+    puts "Price: #{yelp_results.first["price"]}"
+    puts "Open for business? #{yelp_results.first["is_closed"] ? 'Closed' : 'Open'}"
+    puts "Current rating: #{yelp_results.first["rating"]}"
+
     puts "\nPlease select: "
-    puts "1. Investigate the most recent inspection?"
-    puts "2. Investigate full inspection/violation history?"
+    puts "1. Investigate the most recent inspection, or"
+    puts "2. Investigate full inspection/violation history"
+    puts "3. Return to restaurant menu?"
 
     choice = nil
-    while choice != "1" || choice != "2" || choice != "3"
+    while choice != "1" || choice != "2" || choice != "3" || choice != "4"
       choice = gets.chomp
       case choice
       when "1"
@@ -62,8 +70,8 @@ class Investigate
 
   def self.search_all_inspections json
     puts "\nPlease select: "
-    puts "1. Search for a specific violation term?"
-    puts "2. Investigate each violation?"
+    puts "1. Search for something specific, or"
+    puts "2. Investigate entire inspection history"
     choice = nil
     while choice != "1" || choice != "2"
       choice = gets.chomp
@@ -73,6 +81,7 @@ class Investigate
         term = gets.chomp
         search_result = Parser.search_restaurant_violations @id, term
         puts "\n1. Return to inspection menu?"
+        # puts "2. Search for another term"
         choice = nil
         while choice != "1"
           choice = gets.chomp
