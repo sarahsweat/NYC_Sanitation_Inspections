@@ -12,6 +12,7 @@ class CLI
   def initialize
     puts "Welcome to the best NYC Restaurant Sanitation Inspection App!"
     @user = nil
+    @name_result = nil
   end
 
   def sign_up_or_login
@@ -121,12 +122,13 @@ class CLI
     puts "---------------------------------------------"
     puts "----------Search for a Restaurant------------"
     puts "---------------------------------------------"
-    name_result = search_name
-    #
-    # check for nil return value
-    #
+    @name_result = search_name
+    search_after_input @name_result
+  end
+
+  def search_after_input name_result
     if name_result["count"] == 1
-      return_restaurant name_result["results"]
+      select_and_save_to_list name_result["results"][0]["camis"]
     else
       ask_for_filter name_result
     end
@@ -157,24 +159,6 @@ class CLI
     hash
   end
 
-  def return_restaurant data
-    id = data[0]["camis"]
-    name = data[0]["dba"]
-    puts "\nYou've found the record for #{name}."
-    puts "Please select from the following options: "
-    puts "1. Investigate this restaurant"
-    puts "2. Add this restaurant to your list"
-
-    selection = gets.chomp
-    case selection
-    when "1" then
-      init id
-    when "2" then
-      select_and_save_to_list data[0]["camis"]
-    else puts "error"
-    end
-  end
-
   def select_and_save_to_list id
     # prepare the hash for the save method
     good_or_bad = nil
@@ -192,9 +176,11 @@ class CLI
       when "2" then
         good_or_bad = false
       when "3" then
-        init id
+        init id, @name_result
       when "menu" then
         return main_menu
+      when "back" then
+        search_after_input @name_result
       else
         puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         puts "Your response was not recognized. Try again."
@@ -223,7 +209,7 @@ class CLI
           search_by_zipcode hash
         when "MENU"
           main_menu
-        when "back"
+        when "BACK"
           search
         else
           puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -321,7 +307,6 @@ class CLI
     results_ary = API_Comm.find_streets hash
     flag = nil
     while flag.nil?
-      puts "\nPlease select a store location by number to continue: "
       rows = []
       results_ary.each_with_index do |rest, index|
         if rest["grade"] == "A"
@@ -333,14 +318,33 @@ class CLI
         else
           rows << ["#{index+1}.", rest["street"], rest["grade"]]
         end
+
       end
 
 
       table = Terminal::Table.new :title => "Your Search Results".cyan, :headings => ['Number'.cyan, 'Street'.cyan, 'Grade'.cyan], :rows => rows.first(20), :style => {:width => 80}
       puts table
+      puts "\nPlease select a store location by number to continue: "
 
       if rows.count < 20
         flag = true
+        x = nil
+        while x.nil?
+          choice = gets.chomp.downcase
+          if choice.to_i.to_s == choice && choice.to_i <= results_ary.length
+            real_choice = choice.to_i - 1
+            real_data = results_ary[real_choice]
+            select_and_save_to_list real_data["camis"]
+          elsif choice == "menu"
+            return main_menu
+          elsif choice == "back"
+            ask_for_filter hash
+          else
+            puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+            puts "   Sorry, your response was not recognized."
+            puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+          end
+        end
       end
 
 
