@@ -6,7 +6,9 @@ T.B.N.R.S.R.I.A. provides quick and easy access to sanitiation records for resta
 
 ## Features
 * Connections to the NYC Open Data and Yelp APIs 
-* Stylish and functional CLI interface
+* Sophisticated user logins, sign ups, log outs
+* Smooth and seemless input validations
+* Stylish, colorful and functional CLI interface with programatic table-rendering
 
 ## Functionality
 * Save selected restaurants to 'would like to visit' and 'would like to avoid'
