@@ -37,9 +37,9 @@ module Investigate
       puts "Current rating: #{yelp_results.first["rating"]}".green
     end
 
-    puts "\n---------------------------------------------"
-    puts "              Menu options: "
-    puts "---------------------------------------------"
+    puts "\n---------------------------------------------".yellow
+    puts "              Menu options: ".yellow
+    puts "---------------------------------------------".yellow
     puts "1. Investigate the most recent inspection, or"
     puts "2. Investigate full inspection/violation history"
     puts "3. Return to restaurant menu?"
