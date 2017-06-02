@@ -6,7 +6,7 @@ require './lib/api_communicator'
 require './lib/yelp'
 
 module Investigate
-  def init id
+  def init id , name_result
     json = API_Comm.find_restaurant_data id
     json.each do |x|
       date_str = x["inspection_date"]
@@ -37,13 +37,16 @@ module Investigate
       puts "Current rating: #{yelp_results.first["rating"]}"
     end
 
-    puts "\nPlease select: "
+    puts "\n---------------------------------------------"
+    puts "              Menu options: "
+    puts "---------------------------------------------"
     puts "1. Investigate the most recent inspection, or"
     puts "2. Investigate full inspection/violation history"
     puts "3. Return to restaurant menu?"
+    puts "Please select a menu item:"
 
     choice = nil
-    while choice != "1" || choice != "2" || choice != "3" || choice != "4"
+    while choice.nil?
       choice = gets.chomp
       case choice
       when "1"
@@ -52,6 +55,16 @@ module Investigate
         search_all_inspections json
       when "3"
         select_and_save_to_list id
+      when "menu"
+        main_menu
+      when "back"
+        search_after_input name_result
+      else
+        choice = nil
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "Your response was not recognized. Try again."
+        puts "   Remember to enter menu to start over."
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
       end
     end
   end
