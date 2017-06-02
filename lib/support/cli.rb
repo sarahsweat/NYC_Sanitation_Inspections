@@ -10,7 +10,7 @@ class CLI
   attr_accessor :user
 
   def initialize
-    puts "Welcome to the best NYC Restaurant Sanitation Inspection App!"
+    puts "Welcome to the best NYC Restaurant Sanitation Inspection App!".yellow
     @user = nil
     @name_result = nil
   end
@@ -27,13 +27,13 @@ class CLI
         self.signup
         su_or_li = true
       else
-        puts "I did not recognize your response. Please try again."
+        puts "I did not recognize your response. Please try again.".red
       end
     end
   end
 
   def signup
-    puts "----------------SIGNING UP----------------"
+    puts "----------------SIGNING UP----------------".yellow
     puts "Please enter your First Name"
     first_name = gets.chomp.downcase
     puts "Please enter your Last Name"
@@ -44,75 +44,75 @@ class CLI
       new_user.first_name = first_name
       new_user.last_name = last_name
     end
-    puts "Thanks, #{new_user.first_name.capitalize} #{new_user.last_name.capitalize}."
-    puts "Your username is:   #{new_user.username}"
+    puts "Thanks, #{new_user.first_name.capitalize} #{new_user.last_name.capitalize}.".green
+    puts "Your username is:   #{new_user.username}".green
     self.user = new_user
   end
 
   def login
-    puts "----------------LOGGING IN----------------"
+    puts "----------------LOGGING IN----------------".yellow
     while self.user.nil?
       puts "What is your username?"
       name = gets.chomp.downcase
       self.user = User.find_by(username: name)
       if self.user.nil?
-        puts "User not found! Please try again."
+        puts "User not found! Please try again.".red
       end
     end
-    puts "Welcome back, #{self.user.first_name.capitalize} #{self.user.last_name.capitalize}."
-    puts "Your username is:   #{self.user.username}"
+    puts "Welcome back, #{self.user.first_name.capitalize} #{self.user.last_name.capitalize}.".green
+    puts "Your username is:   #{self.user.username}".green
     self.user
   end
 
   def main_menu
     task = nil
     while task.nil?
-      puts "---------------------------------------------"
-      puts "~~~~~         M A I N  M E N U          ~~~~~"
-      puts "---------------------------------------------"
+      puts "---------------------------------------------".yellow
+      puts "~~~~~         M A I N  M E N U          ~~~~~".yellow
+      puts "---------------------------------------------".yellow
       puts "1. Search for a restaurant"
       puts "2. See list of saved good restaurants"
       puts "3. See list of saved restaurants to avoid"
       puts "4. Log out"
       puts "5. Exit app"
-      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".yellow
       puts "     You can type menu at any point to"
       puts "  return to this menu, or press back at any "
       puts "      to return to the previous stage."
-      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".yellow
       puts "Please enter a task number:"
       number = gets.chomp.downcase
       if number[0] == "1"
         self.search
       elsif number[0] == "2"
-        puts "---------------------------------------------"
-        puts "----------List of Good Restaurants-----------"
+        puts "---------------------------------------------".yellow
+        puts "----------List of Good Restaurants-----------".yellow
         self.user.saved_restaurants.where(good_or_bad: true).each_with_index do |rest, index|
-          puts "#{index+1}. #{rest.restaurant.name} - #{rest.restaurant.street}"
+          puts "#{index+1}. #{rest.restaurant.name} - #{rest.restaurant.street}".cyan
         end
       elsif number[0] == "3"
-        puts "---------------------------------------------"
-        puts "--------List of Restaurants to Avoid---------"
+        puts "---------------------------------------------".yellow
+        puts "--------List of Restaurants to Avoid---------".yellow
         self.user.saved_restaurants.where(good_or_bad: false).each_with_index do |rest, index|
-          puts "#{index+1}. #{rest.restaurant.name} - #{rest.restaurant.street}"
+          puts "#{index+1}. #{rest.restaurant.name} - #{rest.restaurant.street}".cyan
         end
       elsif number == "4"
         logout
       elsif number == "5"
         break
       else
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        puts "Task number not recognized! Please try again."
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".yellow
+        puts "Task number not recognized! Please try again.".red
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".yellow
       end
     end
   end
 
   def logout
-      puts "         Goodbye #{self.user.first_name}! Come back again soon!"
-      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      puts "         Goodbye #{self.user.first_name}! Come back again soon!".green
+      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".yellow
       self.user = nil
-      puts "\nWelcome to the best NYC Restaurant Sanitation Inspection App!"
+      puts "\nWelcome to the best NYC Restaurant Sanitation Inspection App!".yellow
       sign_up_or_login
   end
 
@@ -150,9 +150,9 @@ class CLI
       if unique.count > 0
         results = true
       else
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        puts "   Restaurant not found! Please try again.   "
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".yellow
+        puts "   Restaurant not found! Please try again.   ".red
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".yellow
         puts "\nPlease enter a new restaurant name: "
       end
     end
@@ -182,20 +182,20 @@ class CLI
       when "back" then
         search_after_input @name_result
       else
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        puts "Your response was not recognized. Try again."
-        puts "   Remember to enter menu to start over."
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".yellow
+        puts "Your response was not recognized. Try again.".red
+        puts "   Remember to enter menu to start over.".red
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".yellow
       end
     end
     # instantiate new restaurant class / association with hash and boolean
     self.user.save_restaurant_to_user(good_or_bad, hash)
-    puts "Successfully saved #{hash["name"]}."
+    puts "Successfully saved #{hash["name"]}.".green
     main_menu
   end
 
   def ask_for_filter hash
-    puts "\n----------Returned #{hash["count"]} result(s).----------"
+    puts "\n----------Returned #{hash["count"]} result(s).----------".green
     flag = nil
     while flag.nil?
       puts "\nPlease select from the following filters: "
@@ -212,9 +212,9 @@ class CLI
         when "BACK"
           search
         else
-          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-          puts "  Your input was not recognized, please try again."
-          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".yellow
+          puts "  Your input was not recognized, please try again.".red
+          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".yellow
         end
       end
   end
@@ -229,20 +229,20 @@ class CLI
       elsif z == "menu"
         main_menu
       elsif z.to_i.to_s != z || z.length != 5
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        puts "      Zipcode must be a 5 digit number"
-        puts "   Remember to enter menu to start over,  "
-        puts "    or 1 to go back to the filter options."
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".yellow
+        puts "      Zipcode must be a 5 digit number".red
+        puts "   Remember to enter menu to start over,  ".red
+        puts "    or 1 to go back to the filter options.".red
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".yellow
       else
         flag = true
         new_results = API_Comm.find_by_zip hash["results"], z
         if new_results["count"] == 0
           flag = nil
-          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-          puts "There are no locations within the specified zipcode."
-          puts "                Please try again. "
-          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".yellow
+          puts "There are no locations within the specified zipcode.".red
+          puts "                Please try again. ".red
+          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".yellow
         else
           logic_gate new_results
         end
@@ -253,7 +253,7 @@ class CLI
   def search_by_borough(hash)
     flag = nil
     while flag.nil?
-      puts "Available Boroughs:"
+      puts "Available Boroughs:".yellow
       puts "1. Manhattan"
       puts "2. Brooklyn"
       puts "3. Queens"
@@ -285,9 +285,9 @@ class CLI
          when "back" then
            ask_for_filter hash
         else
-          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-          puts "   Sorry, your response was not recognized."
-          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".yellow
+          puts "   Sorry, your response was not recognized.".red
+          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".yellow
           flag = nil
         end
     end
@@ -310,13 +310,13 @@ class CLI
       rows = []
       results_ary.each_with_index do |rest, index|
         if rest["grade"] == "A"
-          rows << ["#{index+1}.", rest["street"], rest["grade"].green]
+          rows << ["#{index+1}.", rest["street"].cyan, rest["grade"].green]
         elsif rest["grade"] == "B"
-          rows << ["#{index+1}.", rest["street"], rest["grade"].yellow]
+          rows << ["#{index+1}.", rest["street"].cyan, rest["grade"].yellow]
         elsif rest["grade"] == "C"
-          rows << ["#{index+1}.", rest["street"], rest["grade"].red]
+          rows << ["#{index+1}.", rest["street"].cyan, rest["grade"].red]
         else
-          rows << ["#{index+1}.", rest["street"], rest["grade"]]
+          rows << ["#{index+1}.", rest["street"].cyan, rest["grade"]]
         end
 
       end
@@ -365,9 +365,9 @@ class CLI
         elsif choice == "back"
           ask_for_filter hash
         else
-          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-          puts "   Sorry, your response was not recognized."
-          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".yellow
+          puts "   Sorry, your response was not recognized.".red
+          puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".yellow
         end
       end
     end
