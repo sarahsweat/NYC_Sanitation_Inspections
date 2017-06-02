@@ -178,7 +178,7 @@ class CLI
       when "2" then
         good_or_bad = false
       when "3" then
-        init id, @name_result
+        init id
       when "menu" then
         return main_menu
       when "back" then

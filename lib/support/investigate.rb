@@ -6,8 +6,9 @@ require './lib/api_communicator'
 require './lib/yelp'
 
 module Investigate
-  def init id , name_result
-    json = API_Comm.find_restaurant_data id
+  def init id
+    @id = id
+    json = API_Comm.find_restaurant_data @id
     json.each do |x|
       date_str = x["inspection_date"]
       parsed_date = DateTime.parse(date_str)
@@ -28,7 +29,7 @@ module Investigate
     puts "Borough: #{json.first["boro"]}".green
     puts "Current Grade: #{most_recent["grade"]}".green
     puts "Last inspection: #{most_recent_date}".green
-    unless yelp_results.empty? || yelp_results["businesses"].empty?
+    unless yelp_results.empty?
       puts "---------------------------------------------".cyan
       puts "            Details from Yelp".cyan
       puts "---------------------------------------------".cyan
@@ -54,7 +55,7 @@ module Investigate
       when "2"
         search_all_inspections json
       when "3"
-        select_and_save_to_list id
+        select_and_save_to_list @id
       when "menu"
         main_menu
       when "back"
@@ -76,7 +77,7 @@ module Investigate
     choice = nil
     while choice != "1"
       choice = gets.chomp
-      init id if choice == "1"
+      init @id if choice == "1"
     end
   end
 
@@ -91,13 +92,13 @@ module Investigate
       when "1"
         puts "\nWhich term would you like to search for?"
         term = gets.chomp
-        search_result = Parser.search_restaurant_violations id, term
+        search_result = Parser.search_restaurant_violations @id, term
         puts "\n1. Return to inspection menu?"
         # puts "2. Search for another term"
         choice = nil
         while choice != "1"
           choice = gets.chomp
-          init id if choice == "1"
+          init @id if choice == "1"
         end
       when "2"
         violation_ary = []
@@ -112,7 +113,7 @@ module Investigate
         choice = nil
         while choice != "1"
           choice = gets.chomp
-          init id if choice == "1"
+          init @id if choice == "1"
         end
       end
     end
