@@ -119,6 +119,7 @@ class CLI
   # add while loops to ensure correct input
 
   def search
+
     puts "---------------------------------------------"
     puts "----------Search for a Restaurant------------"
     puts "---------------------------------------------"
@@ -127,6 +128,7 @@ class CLI
   end
 
   def search_after_input name_result
+
     if name_result["count"] == 1
       select_and_save_to_list name_result["results"][0]["camis"]
     else
