@@ -20,21 +20,21 @@ module Investigate
 
     yelp_results = Yelp.search_yelp_by_phone most_recent["phone"]
 
-    puts "---------------------------------------------"
-    puts "           Inspection Details:"
-    puts "---------------------------------------------"
-    puts "\nName: #{json.first["dba"]}"
-    puts "Street: #{json.first["street"]}"
-    puts "Borough: #{json.first["boro"]}"
-    puts "Current Grade: #{most_recent["grade"]}"
-    puts "Last inspection: #{most_recent_date}"
+    puts "---------------------------------------------".cyan
+    puts "           Inspection Details:".cyan
+    puts "---------------------------------------------".cyan
+    puts "\nName: #{json.first["dba"]}".green
+    puts "Street: #{json.first["street"]}".green
+    puts "Borough: #{json.first["boro"]}".green
+    puts "Current Grade: #{most_recent["grade"]}".green
+    puts "Last inspection: #{most_recent_date}".green
     unless yelp_results.empty? || yelp_results["businesses"].empty?
-      puts "---------------------------------------------"
-      puts "            Details from Yelp"
-      puts "---------------------------------------------"
-      puts "Price: #{yelp_results.first["price"]}"
-      puts "Open for business? #{yelp_results.first["is_closed"] ? 'Closed' : 'Open'}"
-      puts "Current rating: #{yelp_results.first["rating"]}"
+      puts "---------------------------------------------".cyan
+      puts "            Details from Yelp".cyan
+      puts "---------------------------------------------".cyan
+      puts "Price: #{yelp_results.first["price"]}".green
+      puts "Open for business? #{yelp_results.first["is_closed"] ? 'Closed' : 'Open'}".green
+      puts "Current rating: #{yelp_results.first["rating"]}".green
     end
 
     puts "\nPlease select: "
@@ -57,8 +57,8 @@ module Investigate
   end
 
   def most_recent_inspection score, vio
-    puts "\nScore (lower is better): #{score}"
-    puts "Inspection notes: #{vio}"
+    puts "\nScore (lower is better): #{score}".cyan
+    puts "Inspection notes: #{vio}".cyan
     puts "\n1. Return to inspection menu?"
     choice = nil
     while choice != "1"
@@ -94,7 +94,7 @@ module Investigate
           h["violation"] = hash["violation_description"]
           violation_ary << h
         end
-        violation_ary.each {|x| puts "#{x["date"]}: #{x["violation"]}"}
+        violation_ary.each {|x| puts "#{x["date"]}: #{x["violation"]}".cyan}
         puts "\n1. Return to inspection menu?"
         choice = nil
         while choice != "1"
