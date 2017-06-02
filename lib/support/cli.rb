@@ -329,9 +329,10 @@ class CLI
 
 
       table = Terminal::Table.new :title => "Your Search Results".cyan, :headings => ['Number'.cyan, 'Street'.cyan, 'Grade'.cyan], :rows => rows.first(20), :style => {:width => 80}
+      puts table
       puts "\nPlease select a store location by number to continue: "
 
-      if rows.count < 20
+      if rows.count <= 20
         flag = true
         x = nil
         while x.nil?

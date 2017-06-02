@@ -103,18 +103,18 @@ module Investigate
       when "2"
         violation_ary = []
         json.each do |hash|
-          h = []
-          h << hash["new_insp_date"].strftime("%m/%d/%Y")
-          h << hash["violation_description"]
-          # h = {}
-          # h["date"] = hash["new_insp_date"].strftime("%m/%d/%Y")
-          # h["violation"] = hash["violation_description"]
+          # h = []
+          # h << hash["new_insp_date"].strftime("%m/%d/%Y")
+          # h << hash["violation_description"]
+          h = {}
+          h["date"] = hash["new_insp_date"].strftime("%m/%d/%Y")
+          h["violation"] = hash["violation_description"]
           violation_ary << h
         end
-        violations_table = Terminal::Table.new :rows => violation_ary
-        # violation_ary.each {|x| puts "#{x["date"]}: #{x["violation"]}".cyan}
-        violations_table.style = {:all_separators => true}
-        puts violations_table
+        # violations_table = Terminal::Table.new :rows => violation_ary
+        violation_ary.each {|x| puts "\n#{x["date"]}".magenta + "   |   #{x["violation"]} \n".cyan}
+        # violations_table.style = {:all_separators => true}
+        # puts violations_table
         puts "\n1. Return to inspection menu?"
         choice = nil
         while choice != "1"
