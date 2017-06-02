@@ -120,9 +120,9 @@ class CLI
 
   def search
 
-    puts "---------------------------------------------"
-    puts "----------Search for a Restaurant------------"
-    puts "---------------------------------------------"
+    puts "---------------------------------------------".yellow
+    puts "----------Search for a Restaurant------------".yellow
+    puts "---------------------------------------------".yellow
     @name_result = search_name
     search_after_input @name_result
   end
@@ -130,6 +130,7 @@ class CLI
   def search_after_input name_result
 
     if name_result["count"] == 1
+      puts "You have located the record for #{name_result["results"][0]["dba"]}.".green
       select_and_save_to_list name_result["results"][0]["camis"]
     else
       ask_for_filter name_result
@@ -325,7 +326,6 @@ class CLI
 
 
       table = Terminal::Table.new :title => "Your Search Results".cyan, :headings => ['Number'.cyan, 'Street'.cyan, 'Grade'.cyan], :rows => rows.first(20), :style => {:width => 80}
-      puts table
       puts "\nPlease select a store location by number to continue: "
 
       if rows.count < 20

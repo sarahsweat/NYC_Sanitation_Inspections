@@ -62,10 +62,10 @@ module Investigate
         search_after_input name_result
       else
         choice = nil
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        puts "Your response was not recognized. Try again."
-        puts "   Remember to enter menu to start over."
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".yellow
+        puts "Your response was not recognized. Try again.".red
+        puts "   Remember to enter menu to start over.".red
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".yellow
       end
     end
   end
@@ -103,12 +103,18 @@ module Investigate
       when "2"
         violation_ary = []
         json.each do |hash|
-          h = {}
-          h["date"] = hash["new_insp_date"].strftime("%m/%d/%Y")
-          h["violation"] = hash["violation_description"]
+          h = []
+          h << hash["new_insp_date"].strftime("%m/%d/%Y")
+          h << hash["violation_description"]
+          # h = {}
+          # h["date"] = hash["new_insp_date"].strftime("%m/%d/%Y")
+          # h["violation"] = hash["violation_description"]
           violation_ary << h
         end
-        violation_ary.each {|x| puts "#{x["date"]}: #{x["violation"]}".cyan}
+        violations_table = Terminal::Table.new :rows => violation_ary
+        # violation_ary.each {|x| puts "#{x["date"]}: #{x["violation"]}".cyan}
+        violations_table.style = {:all_separators => true}
+        puts violations_table
         puts "\n1. Return to inspection menu?"
         choice = nil
         while choice != "1"
