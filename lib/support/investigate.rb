@@ -20,12 +20,18 @@ module Investigate
 
     yelp_results = Yelp.search_yelp_by_phone most_recent["phone"]
 
+    puts "---------------------------------------------"
+    puts "           Inspection Details:"
+    puts "---------------------------------------------"
     puts "\nName: #{json.first["dba"]}"
     puts "Street: #{json.first["street"]}"
     puts "Borough: #{json.first["boro"]}"
     puts "Current Grade: #{most_recent["grade"]}"
     puts "Last inspection: #{most_recent_date}"
     unless yelp_results.empty? || yelp_results["businesses"].empty?
+      puts "---------------------------------------------"
+      puts "            Details from Yelp"
+      puts "---------------------------------------------"
       puts "Price: #{yelp_results.first["price"]}"
       puts "Open for business? #{yelp_results.first["is_closed"] ? 'Closed' : 'Open'}"
       puts "Current rating: #{yelp_results.first["rating"]}"
