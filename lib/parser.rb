@@ -18,9 +18,9 @@ class Parser
     violation_data = API_Comm.select_all_violations data
     joined = violation_data.join(" ")
     if regex.match(joined)
-      puts "Search for " + search_term + " returned " + true.to_s
+      puts "Search for " + search_term + " returned " + true.to_s.green
     else
-      puts "Search for " + search_term + " returned " + false.to_s
+      puts "Search for " + search_term + " returned " + false.to_s.red
     end
   end
 
