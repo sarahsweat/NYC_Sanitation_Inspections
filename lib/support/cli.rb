@@ -53,10 +53,13 @@ class CLI
     puts "----------------LOGGING IN----------------".yellow
     while self.user.nil?
       puts "What is your username?"
-      name = gets.chomp.downcase
+      name = gets.chomp.downcase.split(" ").join("")
       self.user = User.find_by(username: name)
       if self.user.nil?
-        puts "User not found! Please try again.".red
+        puts "User not found! Please try again or type 1 to signup".red
+        if name == "1" || name == "signup"
+          signup
+      end
       end
     end
     puts "Welcome back, #{self.user.first_name.capitalize} #{self.user.last_name.capitalize}.".green
