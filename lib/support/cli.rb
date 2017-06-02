@@ -267,7 +267,7 @@ class CLI
   def search_by_borough(hash)
     flag = nil
     while flag.nil?
-      puts "Available Boroughs:"
+      puts "Available Boroughs:".yellow
       puts "1. Manhattan"
       puts "2. Brooklyn"
       puts "3. Queens"
